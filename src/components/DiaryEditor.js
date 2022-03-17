@@ -2,86 +2,59 @@
 import MyHeader from "./MyHeader"
 import MyButton from "./MyButton"
 import { useNavigate } from "react-router-dom"
-import { useState,useRef, useContext } from "react"
+import { useState,useRef, useContext, useEffect } from "react"
 import EmotionItem from "./EmotionItem";
 import { DiaryDispachContext } from "../App";
-
-export const getStringDate = (date) => {
-
-    let year = date.getFullYear();
-  
-    let month = date.getMonth() + 1;
-  
-    let day = date.getDate();
-  
-    if (month < 10) {
-  
-      month = `0${month}`;
-  
-    }
-  
-    if (day < 10) {
-  
-      day = `0${day}`;
-  
-    }
-  
-    return `${year}-${month}-${day}`;
-  
-  };
-const emotionList = [
-    {
-        emotion_id:1,
-        emotion_img:process.env.PUBLIC_URL + `/assets/reaction1.png`,
-        emotion_desc:'완전 좋음'
-    },
-    {
-        emotion_id:2,
-        emotion_img:process.env.PUBLIC_URL + `/assets/reaction2.png`,
-        emotion_desc:'좋음'
-    },
-    {
-        emotion_id:3,
-        emotion_img:process.env.PUBLIC_URL + `/assets/reaction3.png`,
-        emotion_desc:'조금 안좋음'
-    },
-    {
-        emotion_id:4,
-        emotion_img:process.env.PUBLIC_URL + `/assets/reaction4.png`,
-        emotion_desc:'안좋음'
-    },
-    
-
-]
+import { getStringDate } from "../util/date";
+import { emotionList } from "../util/emotion";
 
 
 
 
-const DiaryEditor = () => {
+
+const DiaryEditor = ({isEdit,originData}) => {
     const [emotion,setEmotion] = useState(3)
     const [date, setDate] = useState(getStringDate(new Date()));
     const navigate = useNavigate()
     const [content,setContent] = useState("")
     const contentRef = useRef()
-    const {onCreate}= useContext(DiaryDispachContext)
+    const {onCreate,onEdit}= useContext(DiaryDispachContext);
 
     const handleClickEmote = (emotion)=>{
         setEmotion(emotion)
     }
+    useEffect(()=>{
+        if(isEdit){
+            setDate(getStringDate(new Date(parseInt(originData.date))))
+            setEmotion(originData.emotion)
+            setContent(originData.content)
+        }
+
+    },[isEdit,originData])
+
     const handeSubmit = () =>{
-        if (content.length <1){
+        if (content.length < 1){
             contentRef.current.focus()
             return
         }
-        onCreate(date,content,emotion);
+        if(window.confirm(isEdit ? "일기를 수정하시겠습니까?": "새로운 일기를 작성하시겠습니까?")){
+            if(!isEdit){
+                onCreate(date,content,emotion);
+            }
+            else{
+                onEdit(originData.id, date, content, emotion);
+            }
+        }
+        
         navigate("/",{replace:true})
-
     }
+
+    
 
     return(
         <div className="DiaryEditor">
             <MyHeader
-            headText={"새 일기쓰기"}
+            headText={isEdit ? "일기 수정하기":"새 일기쓰기"}
             leftChild={<MyButton text={"< 뒤로가기"} onClick={()=> navigate(-1)}/>}
             />
             <div>

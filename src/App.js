@@ -7,10 +7,6 @@ import New from './pages/New';
 import Edit from './pages/Edit';
 import Diary from './pages/Diary';
 
-//components
-import MyButton from './components/MyButton';
-import MyHeader from './components/MyHeader';
-
 export const DiaryStateContext = React.createContext();
 export const DiaryDispachContext = React.createContext();
 
@@ -31,6 +27,7 @@ const reducer = (state,action) =>{
     }
     case 'EDIT':{
       newState = state.map((it)=>it.id === action.data.id ? {...action.data}:it)
+      break
     }
     default:
       return state
@@ -82,15 +79,15 @@ function App() {
 
   //edit
 
-  const onEdit = (targetId,date,content,emotion)=>{
+  const onEdit = (targetId, date, content, emotion)=>{
     dispatch({
       type:"EDIT",
       data:{
-        id:targetId,
+        id: targetId,
         date: new Date(date).getTime(),
         content,
-        emotion
-      }
+        emotion,
+      },
     })
   }
 
@@ -104,7 +101,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/new" element={<New/>}/>
-        <Route path="/edit" element={<Edit/>}/>
+        <Route path="/edit/:id" element={<Edit/>}/>
         <Route path="/diary/:id" element={<Diary/>}/>
       </Routes>
     </div>
