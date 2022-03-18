@@ -18,7 +18,7 @@ const DiaryEditor = ({isEdit,originData}) => {
     const navigate = useNavigate()
     const [content,setContent] = useState("")
     const contentRef = useRef()
-    const {onCreate,onEdit}= useContext(DiaryDispachContext);
+    const {onCreate,onEdit,onRemove}= useContext(DiaryDispachContext);
 
     const handleClickEmote = (emotion)=>{
         setEmotion(emotion)
@@ -32,7 +32,7 @@ const DiaryEditor = ({isEdit,originData}) => {
 
     },[isEdit,originData])
 
-    const handeSubmit = () =>{
+    const handleSubmit = () =>{
         if (content.length < 1){
             contentRef.current.focus()
             return
@@ -48,6 +48,12 @@ const DiaryEditor = ({isEdit,originData}) => {
         
         navigate("/",{replace:true})
     }
+    const handleRemove = () => {
+        if(window.confirm('정말 삭제하시겠습니까?')){
+            onRemove(originData.id)
+            navigate('/',{replace:true})
+        }
+    }
 
     
 
@@ -56,6 +62,7 @@ const DiaryEditor = ({isEdit,originData}) => {
             <MyHeader
             headText={isEdit ? "일기 수정하기":"새 일기쓰기"}
             leftChild={<MyButton text={"< 뒤로가기"} onClick={()=> navigate(-1)}/>}
+            rightChild={<MyButton text={"삭제하기"} type={"negative"} onClick={handleRemove}/>}
             />
             <div>
                 <section>
@@ -92,7 +99,7 @@ const DiaryEditor = ({isEdit,originData}) => {
             <section>
                 <div className="control_box">
                     <MyButton text={"취소하기"} onClick={()=> navigate(-1)}/>
-                    <MyButton text={"작성완료"} onClick={handeSubmit} type={"positive"}/>
+                    <MyButton text={"작성완료"} onClick={handleSubmit} type={"positive"}/>
                 </div>
             </section>
         </div>

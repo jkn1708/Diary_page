@@ -1,4 +1,4 @@
-import React,{ useReducer, useRef } from 'react';
+import React,{ useEffect, useReducer, useRef } from 'react';
 
 import './App.css';
 import {BrowserRouter, Routes,Route} from "react-router-dom"
@@ -32,28 +32,31 @@ const reducer = (state,action) =>{
     default:
       return state
   }
+  localStorage.setItem("diary",JSON.stringify(newState))
   return newState
 }
-const dummyDate = [
-  {
-    id:1,
-  emotion:1,
-  content:"첫번째 일기",
-  date : 1647421200990
-  },
-  {
-    id:2,
-  emotion:2,
-  content:"두번째 일기",
-  date : 1647421200991
-  }
-]
+
 
 function App() {
-  const [data,dispatch]=useReducer(reducer,dummyDate)
+
+
+  const [data,dispatch]=useReducer(reducer,[])
 
 
   const dataId=useRef(3)
+
+  useEffect(()=>{
+    const localData = localStorage.getItem("diary")
+    if (localData){
+      const diaryList = JSON.parse(localData).sort((a,b)=>b-a)
+      dataId.current =parseInt(diaryList[0].id)+1
+
+      dispatch({type:"INIT",data:diaryList})
+    }
+
+  },[])
+
+
 
   //create
 
