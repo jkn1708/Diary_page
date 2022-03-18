@@ -2,7 +2,7 @@
 import MyHeader from "./MyHeader"
 import MyButton from "./MyButton"
 import { useNavigate } from "react-router-dom"
-import { useState,useRef, useContext, useEffect } from "react"
+import { useState,useRef, useContext, useEffect, useCallback } from "react"
 import EmotionItem from "./EmotionItem";
 import { DiaryDispachContext } from "../App";
 import { getStringDate } from "../util/date";
@@ -20,9 +20,9 @@ const DiaryEditor = ({isEdit,originData}) => {
     const contentRef = useRef()
     const {onCreate,onEdit,onRemove}= useContext(DiaryDispachContext);
 
-    const handleClickEmote = (emotion)=>{
+    const handleClickEmote = useCallback((emotion)=>{
         setEmotion(emotion)
-    }
+    },[])
     useEffect(()=>{
         if(isEdit){
             setDate(getStringDate(new Date(parseInt(originData.date))))
